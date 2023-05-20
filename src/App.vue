@@ -91,7 +91,7 @@ onMounted(() => {
       </a>
       <a v-if="currentFlod">
         <div class="header">
-          <div class="logo">/<span>{{currentFlod}}</span> 10</div>
+          <div class="logo">/<span>{{currentFlod}}</span></div>
         </div>
       </a>
       <div @click="SetSidSta(true)" class="menuBox">
