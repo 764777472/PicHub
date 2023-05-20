@@ -161,9 +161,9 @@ const changeDarkModel = (e) => {
       </lew-form-item>
     </div>
 
-    <lew-form-item direction="row" v-show="repos.length > 0" title="暗黑模式">
+    <!-- <lew-form-item direction="row" v-show="repos.length > 0" title="暗黑模式">
       <lew-switch v-model="user.isDark" @change="changeDarkModel"></lew-switch>
-    </lew-form-item>
+    </lew-form-item> -->
 
     <lew-button
       type="primary"
@@ -173,7 +173,7 @@ const changeDarkModel = (e) => {
     >
       确定
     </lew-button>
-    <lew-button
+    <!-- <lew-button
       type="gray"
       v-show="repos.length == 0"
       @click="
@@ -184,7 +184,7 @@ const changeDarkModel = (e) => {
       :loading="loading_4"
     >
       少废话，先看东西。
-    </lew-button>
+    </lew-button> -->
     <lew-button
       type="primary"
       v-show="repos.length > 0"
@@ -207,7 +207,8 @@ const changeDarkModel = (e) => {
 
 <style lang="scss" scoped>
 .form {
-  width: 400px;
+  width: 96%;
+  // width: 400px;
   margin: 0px auto;
 }
 .title-1 {

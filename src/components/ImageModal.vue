@@ -3,7 +3,7 @@ import { Alert } from '../util/alert'
 import axios from '../axios/http'
 
 import { uploadHelper } from '../util/uploadHelper'
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, watch, ref, onUpdated } from 'vue'
 import { LewFormItem, LewButton, LewSelect } from '../components/base'
 
 import { useRoute, useRouter } from 'vue-router'
@@ -14,7 +14,7 @@ import { GetFileSize, CopyText } from '../util/util'
 const route = useRoute()
 const router = useRouter()
 
-const props = defineProps({ isOpen: Boolean, folders: Array as any })
+const props = defineProps({ isOpen: Boolean, folders: Array as any, isMobile: Boolean })
 const emit = defineEmits(['Close', 'SetLoading'])
 
 let folder: any = ref(route.query.folder) // 文件夹
@@ -76,16 +76,22 @@ onMounted(() => {
     drop_active.value = true
   })
 })
+onUpdated(()=>{
+  // console.log('update',props.folders, folder.value)
+  if(props.folders.length != 0 && !folder.value) {
+    folder.value = props.folders[0]['name']
+  }
+})
 
 // 拖拽上传
 const DropUpload = (e) => {
-  if (!!!folder.value) {
-    Alert({
-      type: 'danger',
-      text: '请选择文件夹',
-    })
-    return
-  }
+  // if (!!!folder.value) {
+  //   Alert({
+  //     type: 'danger',
+  //     text: '请选择文件夹',
+  //   })
+  //   return
+  // }
   let files = e.dataTransfer.files
   drop_active.value = false
   e.stopPropagation()
@@ -109,13 +115,13 @@ const DropUpload = (e) => {
 
 // 监听粘贴操作
 const PasteUpload = (e) => {
-  if (!!!folder.value) {
-    Alert({
-      type: 'danger',
-      text: '请选择文件夹',
-    })
-    return
-  }
+  // if (!!!folder.value) {
+  //   Alert({
+  //     type: 'danger',
+  //     text: '请选择文件夹',
+  //   })
+  //   return
+  // }
   const items = e.clipboardData.items //  获取剪贴板中的数据
   let files: any = null //  用来保存 files 对象
   if (items.length > 0) {
@@ -150,7 +156,7 @@ const ClickUpload = (e) => {
     return
   }
   let files = e.target.files
-
+  console.log('触发file',e)
   AddImageToList(files)
 }
 
@@ -204,7 +210,7 @@ const Upload = async (type) => {
               upload_list.value[i].status = 'success'
               e.url = image.url
               e.download_url = image.download_url
-              e.cdn_url = `https://git.poker/${github_config.owner}/${github_config.repoPath}/blob/main/${folder.value}/${filename}?raw=true`
+              e.cdn_url = `https://cdn.jsdelivr.net/gh/${github_config.owner}/${github_config.repoPath}@master/${folder.value}/${filename}`
               e.git_url = image.git_url
               e.sha = image.sha
               e.upload_type = type
@@ -228,7 +234,7 @@ const Upload = async (type) => {
 
   loading_btn.value = 0
   upload_list.value = upload_list.value.filter((e) => e.status != 'success')
-  router.push((route.fullPath += '&t=' + new Date().getTime()) as any)
+  // router.push((route.fullPath += '&t=' + new Date().getTime()) as any)
   localStorage.setItem('history_list', JSON.stringify(history_list.value))
 }
 
@@ -261,13 +267,15 @@ const GetCdnText = (url) => {
 <template>
   <div
     class="image-modal"
+    :style="isMobile?'width:100%':''"
     id="drop-area"
     @paste="PasteUpload"
-    :class="{ isOpen: props.isOpen }"
+    :class="props.isOpen ? (isMobile ? 'isOpen-mobile' : 'isOpen') : ''"
   >
     <svg
       @click="emit('Close')"
       class="icon-close"
+      style="color: #555;filter: invert(0.5);"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 512 512"
@@ -415,14 +423,14 @@ const GetCdnText = (url) => {
         style="width: 220px"
         v-show="upload_list.length > 0"
         :loading="loading_btn == 1"
-        >原图上传</LewButton
+        >上传原图</LewButton
       >
       <LewButton
         @click="Upload(2)"
         v-show="upload_list.length > 0"
         type="primary"
         :loading="loading_btn == 2"
-        >开始上传</LewButton
+        >压缩上传</LewButton
       >
     </div>
 
@@ -515,9 +523,10 @@ const GetCdnText = (url) => {
 <style lang="scss" scoped>
 .image-modal {
   position: fixed;
+  top: 0;
   left: 0px;
-  z-index: 9;
-  transform: translateX(-300px);
+  z-index: 100;
+  transform: translateX(-100%);
   width: 500px;
   height: 100vh;
   background: var(--background-2);
@@ -700,6 +709,8 @@ const GetCdnText = (url) => {
         }
         .tag-box {
           margin-top: 10px;
+          white-space: nowrap;
+          overflow-x: scroll;
           .tag {
             padding: 2px 4px;
             margin-right: 10px;
@@ -708,6 +719,7 @@ const GetCdnText = (url) => {
             font-size: 12px;
             color: var(--text-color);
           }
+          .tag:last-child {margin-right: 0;}
           .orginal-size {
             text-decoration: line-through;
             color: var(--text-color-2);
@@ -729,5 +741,8 @@ const GetCdnText = (url) => {
 }
 .isOpen {
   transform: translateX(200px);
+}
+.isOpen-mobile {
+  transform: translateX(0px);
 }
 </style>

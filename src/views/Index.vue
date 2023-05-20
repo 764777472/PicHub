@@ -39,18 +39,16 @@ let github_config: GithubConfig = JSON.parse(
 
 const GetImages = (folderPath) => {
   emit('SetLoading', true)
-  axios
-    .get({
+  axios.get({
       url: `/repositories/${github_config?.repoId}/contents/${
         folderPath || ''
       }?t=${new Date().getTime()}`,
-    })
-    .then((res: any) => {
+  }).then((res: any) => {
       files.value = res.data
       emit('SetLoading', false)
       res.data.forEach((e) => {
         if (e.download_url) {
-          e.cdn_url = `https://git.poker/${github_config.owner}/${github_config.repoPath}/blob/main/${folderPath}/${e.name}?raw=true`
+          e.cdn_url = `https://cdn.jsdelivr.net/gh/${github_config.owner}/${github_config.repoPath}@master/${folderPath}/${e.name}`
         }
       })
 
@@ -74,10 +72,9 @@ const GetImages = (folderPath) => {
         )
       }
       images.value = res.data.filter((e) => isAssetTypeAnImage(e.name))
-    })
-    .catch(() => {
+  }).catch(() => {
       emit('SetLoading', false)
-    })
+  })
 }
 
 const GetMarkdownText = (url) => {
@@ -93,22 +90,20 @@ let loading = ref(false)
 const DeleteForder = () => {
   if (files.value[0]?.name == 'init') {
     loading.value = true
-    axios
-      .delete({
+    axios.delete({
         url: `/repos/${github_config.owner}/${github_config.repoPath}/contents/${route.query.folder}/init`,
         data: {
           message: 'delete init file',
           sha: files.value[0]?.sha,
         },
-      })
-      .then(() => {
+    }).then(() => {
         Alert({
           type: 'success',
           text: '删除成功',
         })
         loading.value = false
         router.push('/?reload=true')
-      })
+    })
   } else {
     Alert({
       type: 'success',
@@ -119,24 +114,21 @@ const DeleteForder = () => {
 
 const DeleteImage = (item) => {
   emit('SetLoading', true)
-  axios
-    .delete({
+  axios.delete({
       url: `/repos/${github_config.owner}/${github_config.repoPath}/contents/${route.query.folder}/${item.name}`,
       data: {
         message: 'delete a image',
         sha: item.sha,
       },
-    })
-    .then(() => {
+  }).then(() => {
       Alert({
         type: 'success',
         text: '删除成功',
       })
       GetImages(route.query.folder)
-    })
-    .catch(() => {
+  }).catch(() => {
       emit('SetLoading', false)
-    })
+  })
 }
 
 const FormatWImageInfo = (image) => {
@@ -237,9 +229,16 @@ defineExpose({
 
 <style lang="scss" scoped>
 .index-wrapper {
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+
+
   position: relative;
   width: 100%;
-  height: 100vh;
+  min-height: 100%;
   overflow-y: auto;
 
   box-sizing: border-box;
@@ -248,8 +247,8 @@ defineExpose({
     align-content: flex-start;
     padding: 15px;
     grid-gap: 15px;
-    min-height: calc(100vh - 73px);
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    min-height: calc(100% - 73px);
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     list-style: none;
     .item {
       position: relative;

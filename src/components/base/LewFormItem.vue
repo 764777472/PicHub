@@ -20,11 +20,15 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  center: {
+    type: Boolean,
+    default: false,
+  },
 })
 </script>
 
 <template>
-  <div class="form-item" :class="{ isRow: props.direction == 'row' }">
+  <div class="form-item" :class="{ isRow: props.direction == 'row', isCenter: props.center }">
     <label class="title-label"
       >{{ props.title }}
       <a
@@ -71,4 +75,5 @@ const props = defineProps({
     display: inline-block;
   }
 }
+.isCenter {justify-content: center;}
 </style>

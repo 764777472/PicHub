@@ -29,6 +29,13 @@ const AddForder = () => {
     })
     return
   }
+  if (forderName.value == "") {
+    Alert({
+      type: 'danger',
+      text: '文件夹名称不能为空',
+    })
+    return
+  }
   loading.value = true
   axios
     .put({
@@ -61,10 +68,10 @@ const AddForder = () => {
       <lew-input v-model="forderName" placeholder="输入文件夹名称"></lew-input>
     </lew-form-item>
     <div class="form-item btn-box">
+      <lew-button @click="emit('close')" type="danger">取消</lew-button>
       <lew-button @click="AddForder()" type="primary" :loading="loading">
         确认
       </lew-button>
-      <lew-button @click="emit('close')" type="danger">取消</lew-button>
     </div>
   </div>
 </template>
@@ -72,7 +79,8 @@ const AddForder = () => {
 <style lang="scss" scoped>
 .folder-modal {
   position: absolute;
-  left: -var(--border-width);
+  left: 0;
+  // left: var(--border-width);
   bottom: 40px;
   z-index: 9;
   width: 200px;
@@ -83,6 +91,7 @@ const AddForder = () => {
   box-sizing: border-box;
   border-top: var(--border-width) var(--border-color) solid;
   transition: all 0.25s;
+  overflow: hidden;
 }
 .isOpen {
   bottom: 200px;

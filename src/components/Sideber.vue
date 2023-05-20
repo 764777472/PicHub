@@ -3,6 +3,10 @@ import ImageModal from './ImageModal.vue'
 import FolderModal from './FolderModal.vue'
 import LewButton from './base/LewButton.vue'
 import { Alert } from '../util/alert'
+import {
+  LewFormItem,
+  LewSwitch
+} from '../components/base'
 
 import axios from '../axios/http'
 import { onMounted, ref, watch } from 'vue'
@@ -11,7 +15,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { GithubConfig } from '../model/github_config.model'
 const route = useRoute()
 const router = useRouter()
-const emit = defineEmits(['SetImageModal'])
+const emit = defineEmits(['SetImageModal','hideBar','setFloder'])
 
 let github_config: GithubConfig = JSON.parse(
   localStorage.getItem('github_config') as any
@@ -21,6 +25,9 @@ let folders = ref([] as any)
 let isOpenImageModal = ref(false)
 let isOpenFolderModal = ref(false)
 let loading = ref(false)
+
+
+const props = defineProps({ showSideber: Boolean as any, isMobile: Boolean as any})
 
 onMounted(() => {
   if (github_config?.repoId) {
@@ -75,6 +82,16 @@ const GetFolders = () => {
     })
 }
 
+let isDark = ref(localStorage.getItem('isDark') ? true : false)
+const changeDarkModel = (e) => {
+  if (e.target.checked) {
+    document.getElementsByTagName('html')[0].classList.add('dark')
+    localStorage.setItem('isDark','true')
+  } else {
+    document.getElementsByTagName('html')[0].classList.remove('dark')
+    localStorage.removeItem('isDark');
+  }
+}
 const changeImageModel = () => {
   if (!github_config?.repoId) {
     Alert({
@@ -93,8 +110,10 @@ defineExpose({
 
 <template>
   <div class="wrapper">
+    <!-- 遮罩 -->
+    <div @click="emit('hideBar', false)" v-if="isMobile && showSideber" class="cover-fix"></div>
     <!-- 侧边栏  -->
-    <div class="sidebar">
+    <div v-if="showSideber" class="sidebar">
       <div class="header">
         <div class="mask"></div>
         <div class="logo">Pic<span>Hub</span></div>
@@ -105,6 +124,7 @@ defineExpose({
           v-for="(item, index) in folders"
           :key="index"
           class="item"
+          @click="emit('setFloder', item.name)"
           :class="{ active: route.query.folder == item.name }"
           :href="`/#/?folder=${item.name}`"
         >
@@ -143,19 +163,24 @@ defineExpose({
         <lew-button @click="isOpenFolderModal = !isOpenFolderModal">
           创建文件夹
         </lew-button>
-        <a href="/#/setting"> <lew-button> 设置 </lew-button></a>
-        <a href="/#/about"> <lew-button> 关于 </lew-button></a>
+        <a @click="emit('hideBar', false)" href="/#/setting" style="margin-bottom: 7px;"> <lew-button> 设置 </lew-button></a>
+        <lew-form-item direction="row" center title="暗黑模式" style="height: 45px;">
+          <lew-switch v-model="isDark" @change="changeDarkModel"></lew-switch>
+        </lew-form-item>
+        <!-- <a href="/#/about"> <lew-button> 关于 </lew-button></a> -->
       </div>
     </div>
     <!-- 上传图片 -->
     <image-modal
       :isOpen="isOpenImageModal"
       :folders="folders"
+      :isMobile="isMobile"
       @Close="changeImageModel"
     ></image-modal>
   </div>
 </template>
 <style>
+.cover-fix {position: fixed;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0,0,0,.25);z-index: 90;}
 .image-info .item {
   font-size: 14px;
   margin-bottom: 20px;
@@ -174,13 +199,22 @@ defineExpose({
 
 <style lang="scss" scoped>
 .sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
   width: 200px;
   border-right: var(--border-width) var(--border-color) solid;
   box-sizing: border-box;
   height: 100vh;
   overflow-y: scroll;
+  overflow-x: hidden;
   z-index: 99;
   background-color: var(--background);
+  animation: toRight 0.1s linear;
+  @keyframes toRight {
+    from {left: -200px}
+    to {left: 0;}
+  }
   .header {
     position: fixed;
     height: 70px;
