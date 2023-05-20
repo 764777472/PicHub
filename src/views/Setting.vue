@@ -59,9 +59,11 @@ const SetToken = () => {
 }
 
 const GetRepos = () => {
+  console.log(user.value)
   axios
     .get({
-      url: `/users/${user.value.owner}/repos?sort=created&per_page=100`,
+      url: `/user/repos?type=all&sort=created&per_page=100`,
+      // url: `/users/${user.value.owner}/repos?type=all&sort=created&per_page=100`,
       // url: `/users/${user.value.owner}/repos?type=public&sort=created&per_page=100`,
     })
     .then((res: any) => {

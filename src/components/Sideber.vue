@@ -164,8 +164,11 @@ defineExpose({
           创建文件夹
         </lew-button>
         <a @click="emit('hideBar', false)" href="/#/setting" style="margin-bottom: 7px;"> <lew-button> 设置 </lew-button></a>
-        <lew-form-item direction="row" center title="暗黑模式" style="height: 45px;">
-          <lew-switch v-model="isDark" @change="changeDarkModel"></lew-switch>
+        <lew-form-item direction="row" center title="白天" style="height: 45px;">
+          <div style="display: flex;align-items: center;justify-content: center;">
+            <lew-switch v-model="isDark" @change="changeDarkModel"></lew-switch>
+            <span style="padding-left: 10px;color: var(--text-color);">夜间</span>
+          </div>
         </lew-form-item>
         <!-- <a href="/#/about"> <lew-button> 关于 </lew-button></a> -->
       </div>

@@ -113,6 +113,11 @@ const DeleteForder = () => {
 }
 
 const DeleteImage = (item) => {
+  if(!localStorage.getItem('sureTip')) {
+    let oks = window.confirm('是否删除该图片，并且不再弹窗提醒？')
+    if(!oks) {return;}
+  }
+  localStorage.setItem('sureTip','true')
   emit('SetLoading', true)
   axios.delete({
       url: `/repos/${github_config.owner}/${github_config.repoPath}/contents/${route.query.folder}/${item.name}`,
@@ -290,6 +295,7 @@ defineExpose({
         left: 5px;
         top: 5px;
         display: flex;
+        z-index: 1;
         justify-content: center;
         align-items: center;
         width: 20px;

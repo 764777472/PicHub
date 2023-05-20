@@ -30,6 +30,7 @@ const props = defineProps({
 <template>
   <div class="form-item" :class="{ isRow: props.direction == 'row', isCenter: props.center }">
     <label class="title-label"
+      :style="props.center? 'margin: 0;':''"
       >{{ props.title }}
       <a
         v-if="props.small_title"
