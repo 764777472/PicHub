@@ -61,7 +61,8 @@ const SetToken = () => {
 const GetRepos = () => {
   axios
     .get({
-      url: `/users/${user.value.owner}/repos?type=public&sort=created&per_page=100`,
+      url: `/users/${user.value.owner}/repos?sort=created&per_page=100`,
+      // url: `/users/${user.value.owner}/repos?type=public&sort=created&per_page=100`,
     })
     .then((res: any) => {
       repos.value = res.data
