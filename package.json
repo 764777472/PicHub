@@ -2,11 +2,9 @@
     "name": "pichub",
     "version": "1.0.1",
     "scripts": {
-        "dev": "vite --host",
+        "dev": "vite",
         "build": "vite build",
-        "serve": "vite preview",
-        "lint": "eslint src",
-        "lint:fix": "eslint src --fix --ext .ts,.tsx"
+        "serve": "vite preview"
     },
     "dependencies": {
         "@yireen/squoosh-browser": "^1.0.7",
