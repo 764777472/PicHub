@@ -1,6 +1,7 @@
 {
     "name": "pichub",
     "version": "1.0.1",
+    "license": "ISC",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
